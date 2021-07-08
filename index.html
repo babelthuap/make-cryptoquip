@@ -102,7 +102,7 @@ function decrypt(str, enc) {
 let map = generateMap();
 
 function applyMap() {
-  CIPHERTEXT.innerText = encrypt(PLAINTEXT.value, map);
+  CIPHERTEXT.value = encrypt(PLAINTEXT.value, map);
 }
 
 function randomizeMap() {
