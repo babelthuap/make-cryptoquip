@@ -113,7 +113,7 @@ function randomizeMap() {
 
 PLAINTEXT.addEventListener('keydown', () => requestAnimationFrame(applyMap));
 PLAINTEXT.addEventListener('change', applyMap);
-RANDOMIZE.addEventListener('click', randomizeMap);
+RANDOMIZE.addEventListener('mousedown', randomizeMap);
 randomizeMap();
 })();
 </script>
