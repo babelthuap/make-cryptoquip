@@ -8,10 +8,12 @@
 // HTML
 const PLAINTEXT =
     createEl('textarea', `Who rode to the rescue of Hellmann's Deep? Mayomer.`);
+PLAINTEXT.rows = 4;
+const CIPHERTEXT = createEl('textarea');
+CIPHERTEXT.rows = 4;
+CIPHERTEXT.disabled = true;
 const RANDOMIZE = createEl('button', 'Randomize mapping');
 const MAPPING = createEl('div');
-const CIPHERTEXT = createEl('textarea');
-CIPHERTEXT.disabled = true;
 document.body.append(createEl('div', 'Plaintext'));
 document.body.append(PLAINTEXT);
 document.body.append(createEl('div', 'Ciphertext'));
