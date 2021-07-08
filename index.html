@@ -1,0 +1,112 @@
+<script>
+(() => {
+// HTML
+const PLAINTEXT =
+    createEl('textarea', `Who rode to the rescue of Hellmann's Deep? Mayomer.`);
+const RANDOMIZE = createEl('button', 'Randomize mapping');
+const MAPPING = createEl('div');
+const CIPHERTEXT = createEl('textarea');
+CIPHERTEXT.disabled = true;
+document.body.append(createEl('div', 'Plaintext'));
+document.body.append(PLAINTEXT);
+document.body.append(createEl('div', 'Ciphertext'));
+document.body.append(CIPHERTEXT);
+document.body.append(RANDOMIZE);
+document.body.append(MAPPING);
+function createEl(tag, text) {
+  const el = document.createElement(tag);
+  if (text) {
+    el.innerText = text;
+  }
+  return el;
+}
+
+// CSS
+const style = document.createElement('style');
+style.innerText = `
+body {
+  font-family: monospace;
+  font-size: 16px;
+  margin: 16px 24px;
+}
+textarea {
+  margin-bottom: 16px;
+  width: 100%;
+}
+button {
+  display: block;
+}`;
+document.head.append(style);
+
+// Constants
+const OFFSET = 'A'.charCodeAt(0);
+const SIZE = 26;
+const ALPHABET = new Array(SIZE)
+                     .fill()
+                     .map((_, i) => String.fromCharCode(i + OFFSET))
+                     .join('');
+
+// Returns a random int in [0, n].
+function rand(n) {
+  return Math.floor(Math.random() * (n + 1));
+}
+
+// Performs an in-place Knuth shuffle.
+function shuffle(arr) {
+  let j, temp;
+  for (let i = arr.length - 1; i > 0; i--) {
+    j = rand(i);
+    temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
+  }
+  return arr;
+}
+
+// Generates a random cryptoquip encryption string. For example, the string
+// 'LXP...' means that A is encrypted to L, B to X, C to P, and so forth.
+function generateMap() {
+  const indexMap = shuffle(new Array(SIZE).fill().map((_, i) => i));
+  // Ensure there are no fixed points.
+  return indexMap.some((i, j) => i === j) ?
+      generateMap() :
+      indexMap.map(i => String.fromCharCode(OFFSET + i)).join('');
+}
+
+// Encrypts a message using the given cryptoquip encryption string.
+function encrypt(str, enc) {
+  return Array.from(str, c => enc[c.toUpperCase().charCodeAt(0) - OFFSET] || c)
+      .join('');
+}
+
+// Decrypts a message using the given cryptoquip encryption string.
+function decrypt(str, enc) {
+  const inv =
+      Array.from(enc, c => c.charCodeAt(0) - OFFSET).reduce((inv, i, j) => {
+        inv[i] = String.fromCharCode(OFFSET + j);
+        return inv;
+      }, new Array(SIZE));
+  return Array.from(str, c => inv[c.toUpperCase().charCodeAt(0) - OFFSET] || c)
+      .join('');
+}
+
+/* Set up lego reactions. */
+
+let map = generateMap();
+
+function applyMap() {
+  CIPHERTEXT.innerText = encrypt(PLAINTEXT.value, map);
+}
+
+function randomizeMap() {
+  map = generateMap();
+  MAPPING.innerText = `${ALPHABET}\n${map}`;
+  applyMap();
+}
+
+PLAINTEXT.addEventListener('keydown', () => requestAnimationFrame(applyMap));
+PLAINTEXT.addEventListener('change', applyMap);
+RANDOMIZE.addEventListener('click', randomizeMap);
+randomizeMap();
+})();
+</script>
